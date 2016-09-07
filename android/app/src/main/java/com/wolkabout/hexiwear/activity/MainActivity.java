@@ -43,6 +43,7 @@ import com.wolkabout.hexiwear.service.BluetoothService;
 import com.wolkabout.hexiwear.service.BluetoothService_;
 import com.wolkabout.hexiwear.service.DeviceDiscoveryService;
 import com.wolkabout.hexiwear.service.DeviceRegistrationService;
+import com.wolkabout.hexiwear.util.DeviceClickChoice;
 import com.wolkabout.hexiwear.util.HexiwearDevices;
 import com.wolkabout.wolkrestandroid.Credentials_;
 
@@ -218,7 +219,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         } else if (device.getName().contains(OTAP_PREFIX)) {
             FirmwareSelectActivity_.intent(this).device(device).start();
         } else {
-            ReadingsActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).device(device).start();
+            DeviceClickChoice dialog = new DeviceClickChoice();
+            dialog.setDevice(device);
+            dialog.show(getSupportFragmentManager(), "Action");
         }
     }
 

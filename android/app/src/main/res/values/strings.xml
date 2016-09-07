@@ -122,5 +122,9 @@
     <string name="change_password_success">Password successfully changed.</string>
     <string name="change_password_error">There was an error while changing password.</string>
     <string name="change_password_header">Password change</string>
+    <string name="readout_title">Individual sensor readout</string>
+    <string name="telemetry_title">Telemetry</string>
+    <string name="tap_action_title">Tap Action</string>
+    <string name="unbounded_device_error">Device not bounded!</string>
 
 </resources>
