@@ -65,6 +65,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".activity.Telemetry_"
+            android:label="@string/readings_activity_title"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.SettingsActivity_"
             android:label="@string/preferences_activity_title"
             android:parentActivityName=".activity.ReadingsActivity_"
