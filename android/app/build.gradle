@@ -58,6 +58,8 @@ dependencies {
 
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.5'
+    
+    compile files('libs/unity-classes.jar')
 }
 
 apt {
