@@ -6,11 +6,13 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.RequiresPermission;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.*;
 import android.widget.Toast;
 
 import com.wolkabout.hexiwear.R;
+import com.wolkabout.hexiwear.UnityPlayerActivity;
 import com.wolkabout.hexiwear.activity.ReadingsActivity_;
 import com.wolkabout.hexiwear.activity.Telemetry_;
 
@@ -33,6 +35,10 @@ public class DeviceClickChoice extends  DialogFragment{
                             switch (which) {
                                 case 0:
                                     Telemetry_.intent(getActivity()).flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).device(BtDevice).start();
+                                    Intent telemetryAct = new Intent(getContext(), UnityPlayerActivity.class);
+                                    telemetryAct.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    telemetryAct.putExtra(ReadingsActivity_.DEVICE_EXTRA, BtDevice);
+                                    startActivity(telemetryAct);
                                     break;
                                 case 1:
                                     ReadingsActivity_.intent(getActivity()).flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).device(BtDevice).start();
