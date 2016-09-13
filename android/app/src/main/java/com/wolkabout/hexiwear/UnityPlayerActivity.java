@@ -195,13 +195,11 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 			UnityPlayerActivity.this.onStopReading();
 		}
 	};
-
-	void onModeChanged(@Receiver.Extra final Mode mode) {
+	void onModeChanged(Mode mode) {
 		this.mode = mode;
 		//connectionStatus.setText(mode.getStringResource()); //Debug (mode.getStringResource()
 
 	}
-
 	private void init_(Bundle savedInstanceState) {
 		this.hexiwearDevices = HexiwearDevices_.getInstance_(this);
 		injectExtras_();
@@ -301,6 +299,4 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	public void onServiceDisconnected(final ComponentName name) {
 		// Something terrible happened.
 	}
-
-
 }
