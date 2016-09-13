@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.wolkabout.hexiwear.R;
 import com.wolkabout.hexiwear.UnityPlayerActivity;
 import com.wolkabout.hexiwear.activity.ReadingsActivity_;
-import com.wolkabout.hexiwear.activity.Telemetry_;
 
 /**
  * Created by asad on 9/7/16.
@@ -34,7 +33,6 @@ public class DeviceClickChoice extends  DialogFragment{
                         if (BtDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
                             switch (which) {
                                 case 0:
-                                    Telemetry_.intent(getActivity()).flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).device(BtDevice).start();
                                     Intent telemetryAct = new Intent(getContext(), UnityPlayerActivity.class);
                                     telemetryAct.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     telemetryAct.putExtra(ReadingsActivity_.DEVICE_EXTRA, BtDevice);
