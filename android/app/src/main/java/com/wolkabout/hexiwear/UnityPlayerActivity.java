@@ -41,7 +41,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	private Mode mode = Mode.IDLE;
 	private static final String TAG = UnityPlayerActivity.class.getSimpleName();
 	private String readingBattery;
-	private String readingTemperature;
+	public static String readingTemperature = "StandBy";
 	private String readingHumidity;
 	private String readingPressure;
 	private String readingHeartRate;
