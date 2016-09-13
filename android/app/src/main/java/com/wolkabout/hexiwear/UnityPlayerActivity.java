@@ -6,10 +6,9 @@ import com.wolkabout.hexiwear.model.HexiwearDevice;
 import com.wolkabout.hexiwear.model.Mode;
 import com.wolkabout.hexiwear.service.BluetoothService;
 import com.wolkabout.hexiwear.service.BluetoothService_;
-import com.wolkabout.hexiwear.util.Dialog_;
 import com.wolkabout.hexiwear.util.HexiwearDevices;
 import com.wolkabout.hexiwear.util.HexiwearDevices_;
-import com.wolkabout.wolkrestandroid.Credentials_;
+
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -27,12 +26,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
-import org.androidannotations.annotations.Receiver;
-import org.androidannotations.api.view.OnViewChangedNotifier;
 
 public class UnityPlayerActivity extends Activity implements ServiceConnection
 {
@@ -165,7 +160,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	private final BroadcastReceiver onBondRequestedReceiver_ = new BroadcastReceiver() {
 
 		public void onReceive(Context context, Intent intent) {
-			//UnityPlayerActivity.this.onBondRequested(); Debug R.string.discovery_bonding
+			Log.d(TAG, "Bonding device. Please wait…<");
 		}
 	}
 			;
@@ -176,7 +171,11 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 		public void onReceive(Context context, Intent intent) {
 			Bundle extras_ = ((intent.getExtras()!= null)?intent.getExtras():new Bundle());
 			boolean connectionState = extras_.getBoolean(CONNECTION_STATE_EXTRA);
-			//UnityPlayerActivity.this.onConnectionStateChanged(connectionState); Debug connectionState ? R.string.readings_connection_connected : R.string.readings_connection_reconnecting)
+			if(connectionState){
+				Log.d(TAG, "Connected");
+			}else {
+				Log.d(TAG, "Re-Connected");
+			}
 		}
 	}
 			;
@@ -197,7 +196,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	};
 	void onModeChanged(Mode mode) {
 		this.mode = mode;
-		//connectionStatus.setText(mode.getStringResource()); //Debug (mode.getStringResource()
+		Log.d(TAG, mode.name());
 
 	}
 	private void init_(Bundle savedInstanceState) {
@@ -238,6 +237,8 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 			Log.w(TAG, "UUID " + uuid + " is unknown. Skipping.");
 			return;
 		}
+
+		Log.d(TAG,data);
 
 		switch (characteristic) {
 			case BATTERY:
