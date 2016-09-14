@@ -41,16 +41,16 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	private Mode mode = Mode.IDLE;
 	private static final String TAG = UnityPlayerActivity.class.getSimpleName();
 	private String readingBattery;
-	public static String readingTemperature = "StandBy";
-	private String readingHumidity;
-	private String readingPressure;
+	public volatile static String TemperatureReading;
+	public volatile static String HumidityReading;
+	public volatile static String PressureReading;
 	private String readingHeartRate;
 	private String readingLight;
 	private String readingSteps;
 	private String readingCalories;
-	private String[] accelerationReadings;
-	private String[] magnetReadings;
-	private String[] gyroscopeReadings;
+	public volatile static String AccelerationReadings;
+	public volatile static String MagnetReadings;
+	public volatile static String GyroscopeReadings;
 
 	// Setup activity layout
 	@Override protected void onCreate (Bundle savedInstanceState)
@@ -245,13 +245,13 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				readingBattery = data;
 				break;
 			case TEMPERATURE:
-				readingTemperature = data;
+				TemperatureReading = data;
 				break;
 			case HUMIDITY:
-				readingHumidity = data;
+				HumidityReading = data;
 				break;
 			case PRESSURE:
-				readingPressure = data;
+				PressureReading = data;
 				break;
 			case HEARTRATE:
 				readingHeartRate = data;
@@ -266,13 +266,13 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				readingCalories = data;
 				break;
 			case ACCELERATION:
-				accelerationReadings = data.split(";");
+				AccelerationReadings = data;//data.split(";")
 				break;
 			case MAGNET:
-				magnetReadings = data.split(";");
+				MagnetReadings = data;
 				break;
 			case GYRO:
-				gyroscopeReadings = data.split(";");
+				GyroscopeReadings = data;
 				break;
 			default:
 				break;
