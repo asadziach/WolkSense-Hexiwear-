@@ -1,6 +1,7 @@
 package com.wolkabout.hexiwear;
 
 import com.unity3d.player.*;
+import com.wolkabout.hexiwear.activity.MainActivity_;
 import com.wolkabout.hexiwear.model.Characteristic;
 import com.wolkabout.hexiwear.model.HexiwearDevice;
 import com.wolkabout.hexiwear.model.Mode;
@@ -124,8 +125,10 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	}
 
 	// Pass any events not handled by (unfocused) views straight to UnityPlayer
+	/* handle key events in java */
 	public boolean onKeyUp(int keyCode, KeyEvent event)     { return mUnityPlayer.injectEvent(event); }
 	public boolean onKeyDown(int keyCode, KeyEvent event)   { return mUnityPlayer.injectEvent(event); }
+
 	public boolean onTouchEvent(MotionEvent event)          { return mUnityPlayer.injectEvent(event); }
 	/*API12*/ public boolean onGenericMotionEvent(MotionEvent event)  { return mUnityPlayer.injectEvent(event); }
 
@@ -299,5 +302,14 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	@Override
 	public void onServiceDisconnected(final ComponentName name) {
 		// Something terrible happened.
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (isTaskRoot()) {
+			MainActivity_.intent(this).start();
+		}
+		BluetoothService_.intent(this).stop();
+		super.onBackPressed();
 	}
 }
