@@ -125,10 +125,10 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	}
 
 	// Pass any events not handled by (unfocused) views straight to UnityPlayer
-	/* handle key events in java */
+	/* handle key events in java
 	public boolean onKeyUp(int keyCode, KeyEvent event)     { return mUnityPlayer.injectEvent(event); }
 	public boolean onKeyDown(int keyCode, KeyEvent event)   { return mUnityPlayer.injectEvent(event); }
-
+	*/
 	public boolean onTouchEvent(MotionEvent event)          { return mUnityPlayer.injectEvent(event); }
 	/*API12*/ public boolean onGenericMotionEvent(MotionEvent event)  { return mUnityPlayer.injectEvent(event); }
 
