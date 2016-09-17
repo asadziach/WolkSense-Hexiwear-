@@ -255,7 +255,9 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				HumidityReading = data;
 				break;
 			case PRESSURE:
-				PressureReading = data;
+				float pressure = Float.valueOf(data.split("\\s+")[0]) * 10; //convert kpa to mbar
+				float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
+				PressureReading = String.format("%.2f m", altitude );
 				break;
 			case HEARTRATE:
 				readingHeartRate = data;
@@ -276,7 +278,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				float axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
 				float axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
 
-				float angleX = 90 * (Math.abs(axisX) > 1? 1.0f : axisX);
+				float angleX = -90 * (Math.abs(axisX) > 1? 1.0f : axisX);//Adjust for Unity
 				float angleY = 90 * (Math.abs(axisY) > 1? 1.0f : axisY);
 
 				AccelerationReadings = angleX + ";" +  angleY + ";0";
