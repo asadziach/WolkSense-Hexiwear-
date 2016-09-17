@@ -21,6 +21,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -269,20 +270,79 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				readingCalories = data;
 				break;
 			case ACCELERATION:
-				AccelerationReadings = data;//data.split(";")
+				String[] strVals = data.split(";");
+				// Axis of the rotation sample, not normalized yet.
+				float axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
+				float axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
+				float axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
+
+				float angleX = 90 * (Math.abs(axisX) > 1? 1.0f : axisX);
+				float angleY = 90 * (Math.abs(axisY) > 1? 1.0f : axisY);
+
+				AccelerationReadings = angleX + ";" +  angleY + ";0";
+
 				break;
 			case MAGNET:
 				MagnetReadings = data;
 				break;
 			case GYRO:
 				GyroscopeReadings = data;
+				strVals = data.split(";");
+
+				long currenttime = System.nanoTime();
+				// This timestep's delta rotation to be multiplied by the current rotation
+				// after computing it from the gyro sample data.
+				if (timestamp != 0) {
+					final float dT = (currenttime - timestamp) * NS2S;
+					// Axis of the rotation sample, not normalized yet.
+					axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
+					axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
+					axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
+
+					// Calculate the angular speed of the sample
+					float omegaMagnitude = (float)Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+
+					// Normalize the rotation vector if it's big enough to get the axis
+					// (that is, EPSILON should represent your maximum allowable margin of error)
+					if (omegaMagnitude > EPSILON) {
+						axisX /= omegaMagnitude;
+						axisY /= omegaMagnitude;
+						axisZ /= omegaMagnitude;
+					}
+
+					// Integrate around this axis with the angular speed by the timestep
+					// in order to get a delta rotation from this sample over the timestep
+					// We will convert this axis-angle representation of the delta rotation
+					// into a quaternion before turning it into the rotation matrix.
+					float thetaOverTwo = omegaMagnitude * dT / 2.0f;
+					float sinThetaOverTwo = (float)Math.sin(thetaOverTwo);
+					float cosThetaOverTwo = (float)Math.cos(thetaOverTwo);
+					deltaRotationVector[0] = sinThetaOverTwo * axisX;
+					deltaRotationVector[1] = sinThetaOverTwo * axisY;
+					deltaRotationVector[2] = sinThetaOverTwo * axisZ;
+					deltaRotationVector[3] = cosThetaOverTwo;
+				}
+				timestamp = currenttime;
+				float[] deltaRotationMatrix = new float[9];
+				SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
+				// User code should concatenate the delta rotation we computed with the current rotation
+				// in order to get the updated rotation.
+				// rotationCurrent = rotationCurrent * deltaRotationMatrix;
+
+
 				break;
 			default:
 				break;
 		}
 	}
 
-	void onStopReading() {
+	// Create a constant to convert nanoseconds to seconds.
+	private static final float EPSILON = 1.0f;
+	private static final float NS2S = 1.0f / 1000000000.0f;
+	private final float[] deltaRotationVector = new float[4];
+    private float timestamp;
+
+		void onStopReading() {
 		Log.i(TAG, "Stop command received. Finishing...");
 		finish();
 	}
