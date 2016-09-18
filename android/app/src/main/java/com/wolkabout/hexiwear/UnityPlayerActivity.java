@@ -273,15 +273,18 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				break;
 			case ACCELERATION:
 				String[] strVals = data.split(";");
+
 				// Axis of the rotation sample, not normalized yet.
-				float axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
-				float axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
-				float axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
+				rotationVector[0] = Float.valueOf(strVals[0].split("\\s+")[0]); // X
+				rotationVector[1] = Float.valueOf(strVals[1].split("\\s+")[0]); // Y
+				rotationVector[2] = Float.valueOf(strVals[2].split("\\s+")[0]); // Z
 
-				float angleX = -90 * (Math.abs(axisX) > 1? 1.0f : axisX);//Adjust for Unity
-				float angleY = 90 * (Math.abs(axisY) > 1? 1.0f : axisY);
+				normalize3DVector(rotationVector);
 
-				AccelerationReadings = angleX + ";" +  angleY + ";0";
+				//float angleX = -90 * rotationVector[0];//Adjust for Unity
+				//float angleY = 90 * rotationVector[1];
+
+				//AccelerationReadings = angleX + ";" +  angleY + ";0";
 
 				break;
 			case MAGNET:
@@ -291,15 +294,15 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				GyroscopeReadings = data;
 				strVals = data.split(";");
 
-				long currenttime = System.nanoTime();
+				long currentTime = System.nanoTime();
 				// This timestep's delta rotation to be multiplied by the current rotation
 				// after computing it from the gyro sample data.
 				if (timestamp != 0) {
-					final float dT = (currenttime - timestamp) * NS2S;
+					final float dT = (currentTime - timestamp) * NS2S;
 					// Axis of the rotation sample, not normalized yet.
-					axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
-					axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
-					axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
+					float axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
+					float axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
+					float axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
 
 					// Calculate the angular speed of the sample
 					float omegaMagnitude = (float)Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
@@ -323,8 +326,10 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 					deltaRotationVector[1] = sinThetaOverTwo * axisY;
 					deltaRotationVector[2] = sinThetaOverTwo * axisZ;
 					deltaRotationVector[3] = cosThetaOverTwo;
+
+					GyroscopeReadings = deltaRotationVector[0] + " " + deltaRotationVector[1] + " " + deltaRotationVector[2];
 				}
-				timestamp = currenttime;
+				timestamp = currentTime;
 				float[] deltaRotationMatrix = new float[9];
 				SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
 				// User code should concatenate the delta rotation we computed with the current rotation
@@ -336,12 +341,27 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 			default:
 				break;
 		}
+		float R = (float)Math.sqrt(deltaRotationVector[0]*deltaRotationVector[0] + deltaRotationVector[1]*deltaRotationVector[1] + deltaRotationVector[2]*deltaRotationVector[2]);
+		float x,y;
+		if(R > 1.0f){
+			x = (deltaRotationVector[0] * 0.98f) + (0.02f * rotationVector[0]);
+			y = (deltaRotationVector[1] * 0.98f) + (0.02f * rotationVector[1]);
+		}else {
+			x = rotationVector[0];
+			y = rotationVector[1];
+		}
+		float angleX = -90 * x;//Adjust for Unity
+		float angleY = 90 * y;
+
+		AccelerationReadings = angleX + ";" +  angleY + ";0";
+
 	}
 
 	// Create a constant to convert nanoseconds to seconds.
 	private static final float EPSILON = 1.0f;
 	private static final float NS2S = 1.0f / 1000000000.0f;
 	private final float[] deltaRotationVector = new float[4];
+	float rotationVector[] = new float[3];
     private float timestamp;
 
 		void onStopReading() {
@@ -373,5 +393,13 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 		}
 		BluetoothService_.intent(this).stop();
 		super.onBackPressed();
+	}
+
+	void normalize3DVector(float[] vector){
+		float R;
+		R = (float)Math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2]);
+		vector[0] /= R;
+		vector[1] /= R;
+		vector[2] /= R;
 	}
 }
