@@ -42,7 +42,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 	private boolean isBound;
 	private Mode mode = Mode.IDLE;
 	private static final String TAG = UnityPlayerActivity.class.getSimpleName();
-	private String readingBattery;
+	public volatile static String ReadingBattery;
 	public volatile static String TemperatureReading;
 	public volatile static String HumidityReading;
 	public volatile static String PressureReading;
@@ -246,7 +246,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 
 		switch (characteristic) {
 			case BATTERY:
-				readingBattery = data;
+				ReadingBattery = (data.split("\\s+")[0]);
 				break;
 			case TEMPERATURE:
 				TemperatureReading = data;
