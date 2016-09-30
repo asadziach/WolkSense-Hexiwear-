@@ -278,14 +278,26 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 				float axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
 				float axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
 
-				float angleX = -90 * (Math.abs(axisX) > 1? 1.0f : axisX);//Adjust for Unity
+				float angleX = -90 * (Math.abs(axisX) > 1? 1.0f : axisZ);//Adjust for Unity
 				float angleY = 90 * (Math.abs(axisY) > 1? 1.0f : axisY);
 
 				AccelerationReadings = angleX + ";" +  angleY + ";0";
 
 				break;
 			case MAGNET:
-				MagnetReadings = data;
+
+				 strVals = data.split(";");
+				// Axis of the rotation sample, not normalized yet.
+				 axisX = Float.valueOf(strVals[0].split("\\s+")[0]);
+				 axisY = Float.valueOf(strVals[1].split("\\s+")[0]);
+				 axisZ = Float.valueOf(strVals[2].split("\\s+")[0]);
+
+				float normal = (axisY *-1) - 10;
+				if (normal > 55)
+					normal = 55;
+				float angle = normal/55.0f * 360;
+				MagnetReadings = String.valueOf(angle);
+
 				break;
 			case GYRO:
 				GyroscopeReadings = data;
