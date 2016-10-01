@@ -257,7 +257,7 @@ public class UnityPlayerActivity extends Activity implements ServiceConnection
 			case PRESSURE:
 				float pressure = Float.valueOf(data.split("\\s+")[0]) * 10; //convert kpa to mbar
 				float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
-				PressureReading = String.format("%.2f m", altitude );
+				PressureReading = String.valueOf(altitude); //String.format("%.2f m", altitude );
 				break;
 			case HEARTRATE:
 				readingHeartRate = data;
